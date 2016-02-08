@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
     private void launch() {
         Intent startCustomCameraIntent = new Intent(this, CameraActivity.class);
         startCustomCameraIntent.putExtra(CameraActivity.EXTRA_PICTURE_MIN_WIDTH, 480);
+        startCustomCameraIntent.putExtra(CameraActivity.EXTRA_STORAGE_DIRECTORY, "SquareCameraDemo");
         startActivityForResult(startCustomCameraIntent, REQUEST_CAMERA);
     }
 

@@ -10,6 +10,7 @@ import android.view.View;
 public class CameraActivity extends AppCompatActivity {
 
     public static final String EXTRA_PICTURE_MIN_WIDTH = "com.desmond.squarecamera.EXTRA_PICTURE_MIN_WIDTH";
+    public static final String EXTRA_STORAGE_DIRECTORY = "com.desmond.squarecamera.EXTRA_STORAGE_DIRECTORY";
 
     public static final String TAG = CameraActivity.class.getSimpleName();
 
@@ -24,11 +25,12 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.squarecamera__activity_camera);
 
         int pictureMinWidth = getIntent().getIntExtra(EXTRA_PICTURE_MIN_WIDTH, 0);
+        String storageDirectory = getIntent().getStringExtra(EXTRA_STORAGE_DIRECTORY);
 
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, CameraFragment.newInstance(pictureMinWidth), CameraFragment.TAG)
+                    .replace(R.id.fragment_container, CameraFragment.newInstance(pictureMinWidth, storageDirectory), CameraFragment.TAG)
                     .commit();
         }
     }

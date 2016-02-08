@@ -37,6 +37,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     public static final String CAMERA_FLASH_KEY = "flash_mode";
     public static final String IMAGE_INFO = "image_info";
     public static final String PICTURE_MIN_WIDTH = "picture_min_width";
+    public static final String STORAGE_DIRECTORY = "storage_directory";
 
     private int pictureMinWidth = 0;
 
@@ -56,10 +57,11 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         return new CameraFragment();
     }
 
-    public static Fragment newInstance(int pictureSizeMinWidth) {
+    public static Fragment newInstance(int pictureSizeMinWidth, String storageDirectory) {
         CameraFragment cameraFragment = new CameraFragment();
         Bundle arguments = new Bundle();
         arguments.putInt(PICTURE_MIN_WIDTH, pictureSizeMinWidth);
+        arguments.putSerializable(STORAGE_DIRECTORY, storageDirectory);
         cameraFragment.setArguments(arguments);
         return cameraFragment;
     }
@@ -503,6 +505,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
      */
     @Override
     public void onPictureTaken(byte[] data, Camera camera) {
+        String storageDirectory = getArguments().getString(STORAGE_DIRECTORY);
         int rotation = getPhotoRotation();
 //        Log.d(TAG, "normal orientation: " + orientation);
 //        Log.d(TAG, "Rotate Picture by: " + rotation);
@@ -510,7 +513,7 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
                 .beginTransaction()
                 .replace(
                         R.id.fragment_container,
-                        EditSavePhotoFragment.newInstance(data, rotation, mImageParameters.createCopy()),
+                        EditSavePhotoFragment.newInstance(data, rotation, mImageParameters.createCopy(), storageDirectory),
                         EditSavePhotoFragment.TAG)
                 .addToBackStack(null)
                 .commit();

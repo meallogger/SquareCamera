@@ -29,17 +29,19 @@ public class EditSavePhotoFragment extends Fragment {
     public static final String BITMAP_KEY = "bitmap_byte_array";
     public static final String ROTATION_KEY = "rotation";
     public static final String IMAGE_INFO = "image_info";
+    private static final String STORAGE_DIRECTORY = "storage_directory";
 
     private static final int REQUEST_STORAGE = 1;
 
     public static Fragment newInstance(byte[] bitmapByteArray, int rotation,
-                                       @NonNull ImageParameters parameters) {
+                                       @NonNull ImageParameters parameters, String storageDirectory) {
         Fragment fragment = new EditSavePhotoFragment();
 
         Bundle args = new Bundle();
         args.putByteArray(BITMAP_KEY, bitmapByteArray);
         args.putInt(ROTATION_KEY, rotation);
         args.putParcelable(IMAGE_INFO, parameters);
+        args.putString(STORAGE_DIRECTORY, storageDirectory);
 
         fragment.setArguments(args);
         return fragment;
@@ -124,10 +126,10 @@ public class EditSavePhotoFragment extends Fragment {
             final boolean isGranted = data.getBooleanExtra(RuntimePermissionActivity.REQUESTED_PERMISSION, false);
             final View view = getView();
             if (isGranted && view != null) {
+                String storageDirectory = getArguments().getString(STORAGE_DIRECTORY);
                 ImageView photoImageView = (ImageView) view.findViewById(R.id.photo);
-
                 Bitmap bitmap = ((BitmapDrawable) photoImageView.getDrawable()).getBitmap();
-                Uri photoUri = ImageUtility.savePicture(getActivity(), bitmap);
+                Uri photoUri = ImageUtility.savePicture(getActivity(), bitmap, storageDirectory);
 
                 ((CameraActivity) getActivity()).returnPhotoUri(photoUri);
             }

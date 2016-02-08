@@ -56,16 +56,19 @@ public class ImageUtility {
         return bitmap;
     }
 
-    public static Uri savePicture(Context context, Bitmap bitmap) {
+    public static Uri savePicture(Context context, Bitmap bitmap, String storageDirectory) {
         int cropHeight;
         if (bitmap.getHeight() > bitmap.getWidth()) cropHeight = bitmap.getWidth();
         else                                        cropHeight = bitmap.getHeight();
 
         bitmap = ThumbnailUtils.extractThumbnail(bitmap, cropHeight, cropHeight, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
 
+        if(storageDirectory == null) {
+            storageDirectory = "SquareCamera";
+        }
         File mediaStorageDir = new File(
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                context.getString(R.string.squarecamera__app_name)
+                storageDirectory
         );
 
         if (!mediaStorageDir.exists()) {

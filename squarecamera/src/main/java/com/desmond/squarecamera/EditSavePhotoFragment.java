@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -87,7 +88,7 @@ public class EditSavePhotoFragment extends Fragment {
     }
 
     private void rotatePicture(int rotation, byte[] data, ImageView photoImageView) {
-        Bitmap bitmap = ImageUtility.decodeSampledBitmapFromByte(getActivity(), data);
+        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 //        Log.d(TAG, "original bitmap width " + bitmap.getWidth() + " height " + bitmap.getHeight());
         if (rotation != 0) {
             Bitmap oldBitmap = bitmap;

@@ -36,9 +36,9 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     public static final String CAMERA_ID_KEY = "camera_id";
     public static final String CAMERA_FLASH_KEY = "flash_mode";
     public static final String IMAGE_INFO = "image_info";
+    public static final String PICTURE_MIN_WIDTH = "picture_min_width";
 
-    private static final int PICTURE_SIZE_MAX_WIDTH = 1280;
-    private static final int PREVIEW_SIZE_MAX_WIDTH = 640;
+    private int pictureMinWidth = 0;
 
     private int mCameraID;
     private String mFlashMode;
@@ -56,7 +56,16 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         return new CameraFragment();
     }
 
+    public static Fragment newInstance(int pictureSizeMinWidth) {
+        CameraFragment cameraFragment = new CameraFragment();
+        Bundle arguments = new Bundle();
+        arguments.putInt(PICTURE_MIN_WIDTH, pictureSizeMinWidth);
+        cameraFragment.setArguments(arguments);
+        return cameraFragment;
+    }
+
     public CameraFragment() {}
+
 
     @Override
     public void onAttach(Context context) {
@@ -79,6 +88,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
             mFlashMode = savedInstanceState.getString(CAMERA_FLASH_KEY);
             mImageParameters = savedInstanceState.getParcelable(IMAGE_INFO);
         }
+
+        this.pictureMinWidth = getArguments().getInt(PICTURE_MIN_WIDTH);
     }
 
     @Override
@@ -358,21 +369,23 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
     }
 
     private Size determineBestPreviewSize(Camera.Parameters parameters) {
-        return determineBestSize(parameters.getSupportedPreviewSizes(), PREVIEW_SIZE_MAX_WIDTH);
+        return determineBestSize(parameters.getSupportedPreviewSizes(), 0);
     }
 
     private Size determineBestPictureSize(Camera.Parameters parameters) {
-        return determineBestSize(parameters.getSupportedPictureSizes(), PICTURE_SIZE_MAX_WIDTH);
+        return determineBestSize(parameters.getSupportedPictureSizes(), pictureMinWidth);
     }
 
-    private Size determineBestSize(List<Size> sizes, int widthThreshold) {
+    private Size determineBestSize(List<Size> sizes, int minWidth) {
         Size bestSize = null;
         Size size;
         int numOfSizes = sizes.size();
         for (int i = 0; i < numOfSizes; i++) {
             size = sizes.get(i);
             boolean isDesireRatio = (size.width / 4) == (size.height / 3);
-            boolean isBetterSize = (bestSize == null) || size.width > bestSize.width;
+            boolean isBetterSize = minWidth > 0 ?
+                    (size.width >= minWidth && ((bestSize == null) || size.width < bestSize.width)) :
+                    ((bestSize == null) || size.width > bestSize.width);
 
             if (isDesireRatio && isBetterSize) {
                 bestSize = size;

@@ -384,10 +384,13 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
         int numOfSizes = sizes.size();
         for (int i = 0; i < numOfSizes; i++) {
             size = sizes.get(i);
-            boolean isDesireRatio = (size.width / 4) == (size.height / 3);
+            int shortSide = Math.min(size.width, size.height);
+            int longSide = Math.max(size.width, size.height);
+
+            boolean isDesireRatio = (longSide / 4) == (shortSide / 3);
             boolean isBetterSize = minWidth > 0 ?
-                    (size.width >= minWidth && ((bestSize == null) || size.width < bestSize.width)) :
-                    ((bestSize == null) || size.width > bestSize.width);
+                    (shortSide >= minWidth && ((bestSize == null) || shortSide < Math.min(bestSize.width, bestSize.height))) :
+                    ((bestSize == null) || shortSide > Math.min(bestSize.width, bestSize.height));
 
             if (isDesireRatio && isBetterSize) {
                 bestSize = size;
@@ -398,6 +401,8 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback, 
             Log.d(TAG, "cannot find the best camera size");
             return sizes.get(sizes.size() - 1);
         }
+
+        Log.d(TAG, "bestSize=" + bestSize.width);
 
         return bestSize;
     }
